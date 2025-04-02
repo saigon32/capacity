@@ -1,0 +1,22 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: "capacity"
+  devtools:
+    add-properties: true
+  profiles:
+    include: null
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+entries:
+  reactive-web:
+    basePath: "/capacity"
