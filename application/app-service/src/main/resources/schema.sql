@@ -12,6 +12,13 @@ CREATE TABLE IF NOT EXISTS capacity (
     description VARCHAR(90) NOT NULL,
     UNIQUE (name)
 );
+
+--postgres
+CREATE TABLE IF NOT EXISTS capacity_technology (
+    id_capacity VARCHAR(50) NOT NULL,
+    id_technology VARCHAR(50) NOT NULL
+);
+
 --postgres
 CREATE TABLE IF NOT EXISTS capacity_bootcamp (
     id_capacity VARCHAR(50) NOT NULL,

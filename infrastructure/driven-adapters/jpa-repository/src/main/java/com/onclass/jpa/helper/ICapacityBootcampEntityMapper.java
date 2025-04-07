@@ -15,6 +15,4 @@ public interface ICapacityBootcampEntityMapper {
     CapacityBootcamp toModel(CapacityBootcampEntity capacityBootcampEntity);
     List<CapacityBootcamp> toModelList(List<CapacityBootcampEntity> capacityBootcampEntity);
     List<CapacityBootcampEntity> toEntityList(List<CapacityBootcamp> capacityBootcamp);
-
-
 }

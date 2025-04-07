@@ -6,6 +6,7 @@ import com.onclass.jpa.config.DBErrorMessage;
 import com.onclass.jpa.config.DBException;
 import com.onclass.jpa.entity.CapacityBootcampEntity;
 import com.onclass.jpa.entity.CapacityEntity;
+import com.onclass.jpa.entity.CapacityTechnologyEntity;
 import com.onclass.jpa.helper.ICapacityBootcampEntityMapper;
 import com.onclass.jpa.helper.ICapacityEntityMapper;
 import com.onclass.model.capacity.Capacity;
@@ -34,10 +35,10 @@ public class CapacityR2DbcAdapter implements ICapacityPersistencePort {
 
     @Override
     public Mono<Capacity> saveCapacity(Capacity capacity) {
-
         CapacityEntity entity = capacityEntityMapper.toEntity(capacity);
         return capacityRepository.save(entity)
                 .map(capacityEntityMapper::toModel)
+                .map(capacity1 -> capacity1)
                 .onErrorResume(DuplicateKeyException.class, ex -> Mono.error(new DBException(DBErrorMessage.CAPACITY_ALREADY_EXISTS)));
     }
 
@@ -65,7 +66,5 @@ public class CapacityR2DbcAdapter implements ICapacityPersistencePort {
                 .flatMap(capacityBootcampRepository::save)
                 .map(capacityBootcampEntityMapper::toModel);
     }
-
-
 
 }
