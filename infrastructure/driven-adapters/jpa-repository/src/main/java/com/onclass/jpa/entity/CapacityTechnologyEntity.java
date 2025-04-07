@@ -11,7 +11,6 @@ import org.springframework.data.relational.core.mapping.Table;
 @NoArgsConstructor
 @ToString
 public class CapacityTechnologyEntity {
-    private Integer id;
     @Column("id_capacity")
     private Integer idCapacity;
     @Column("id_technology")

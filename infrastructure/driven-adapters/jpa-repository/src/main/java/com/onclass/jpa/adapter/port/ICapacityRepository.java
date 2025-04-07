@@ -17,5 +17,4 @@ public interface ICapacityRepository extends ReactiveCrudRepository<CapacityEnti
     Mono<CapacityEntity> findByName(String name);
     Flux<CapacityEntity> findAllBy(Pageable pageable);
     Flux<CapacityBootcampEntity> saveAll(List<CapacityBootcampEntity> abilityBootcampEntities);
-
 }

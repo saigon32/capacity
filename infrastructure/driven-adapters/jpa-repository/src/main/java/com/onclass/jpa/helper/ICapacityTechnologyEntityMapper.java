@@ -13,16 +13,17 @@ import java.util.stream.Collectors;
 
 @Mapper
 public interface ICapacityTechnologyEntityMapper {
-    ICapacityBootcampEntityMapper MAPPER = Mappers.getMapper(ICapacityBootcampEntityMapper.class);
+    ICapacityTechnologyEntityMapper MAPPER = Mappers.getMapper(ICapacityTechnologyEntityMapper.class);
 
     @Mapping(target = "idCapacity", source = "capacityId")
     @Mapping(target = "idTechnology", source = "technologyId")
-    CapacityTechnologyEntity toEntity(Integer capacityId, String technologyId);
+    CapacityTechnologyEntity toEntity(Integer capacityId, Integer technologyId);
 
     default List<CapacityTechnologyEntity> toEntityList(Capacity capacity) {
         Set<Technology> technologies = capacity.getTechnologyIds();
+
         if (technologies == null || capacity.getId() == null) {
-            return List.of(); // retorno vacío si no hay tecnologías o id
+            return List.of();
         }
         return technologies.stream()
                 .map(tech -> toEntity(capacity.getId(), tech.getId()))
