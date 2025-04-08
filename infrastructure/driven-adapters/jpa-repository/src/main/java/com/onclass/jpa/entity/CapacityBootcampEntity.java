@@ -4,7 +4,7 @@ import lombok.*;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table("capacity_bootcamp")
+@Table("capacity.capacity_bootcamp")
 @Getter
 @Setter
 @AllArgsConstructor
