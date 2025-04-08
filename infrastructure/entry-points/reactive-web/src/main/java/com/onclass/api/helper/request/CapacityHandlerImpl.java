@@ -5,23 +5,24 @@ import com.onclass.api.helper.mappers.ICapacityRequestMapper;
 import com.onclass.api.helper.mappers.ICapacityResponseMapper;
 import com.onclass.api.helper.request.dto.CapacityBootcampRequestDto;
 import com.onclass.api.helper.request.dto.CapacityRequestDto;
+import com.onclass.jpa.adapter.port.ITechnologyWebClientPort;
 import com.onclass.jpa.helper.TechnologyCapacityDto;
 import com.onclass.model.capacity.Capacity;
 import com.onclass.model.capacity.CapacityBootcamp;
 import com.onclass.model.capacity.Technology;
 import com.onclass.model.capacity.gateways.ICapacityServicePort;
-import com.onclass.jpa.adapter.port.ITechnologyWebClientPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -46,23 +47,21 @@ public class CapacityHandlerImpl implements ICapacityHandler {
                                 technologyCapacityDto.setCapacityId(savedCapacity.getId());
                                 technologyCapacityDto.setTechnologyIds(dto.getTechnologyIds());
 
-                                return associateTechnologiesWithCapacity(technologyCapacityDto)
-                                        .then(
-                                                technologyWebClientPort.getTechnologiesByIds(dto.getTechnologyIds())
-                                                        .flatMap(technologies -> {
-                                                            savedCapacity.setTechnologyIds(new HashSet<>(technologies));
-                                                            return ServerResponse.status(HttpStatus.CREATED)
-                                                                    .contentType(MediaType.APPLICATION_JSON)
-                                                                    .bodyValue(capacityResponseMapper.toDto(savedCapacity));
-                                                        })
-                                        );
+                                return technologyWebClientPort.getTechnologiesByIds(dto.getTechnologyIds())
+                                        .flatMap(technologies -> {
+                                            savedCapacity.setTechnologyIds(new HashSet<>(technologies));
+                                            technologyWebClientPort.createTechnologies(capacity).then();
+                                            return ServerResponse.status(HttpStatus.CREATED)
+                                                    .contentType(MediaType.APPLICATION_JSON)
+                                                    .bodyValue(capacityResponseMapper.toDto(savedCapacity));
+                                        });
                             });
                 });
     }
 
-    private Mono<Void> associateTechnologiesWithCapacity(TechnologyCapacityDto technologyCapacityDto) {
+    /*private Mono<Void> associateTechnologiesWithCapacity(TechnologyCapacityDto technologyCapacityDto) {
         return technologyWebClientPort.associateTechnologyWithCapacity(technologyCapacityDto);
-    }
+    }*/
 
     @Override
     public Mono<ServerResponse> getCapacities(ServerRequest request) {

@@ -1,8 +1,9 @@
 package com.onclass.jpa.adapter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.onclass.jpa.helper.TechnologyCapacityDto;
 import com.onclass.jpa.adapter.port.ITechnologyWebClientPort;
+import com.onclass.jpa.helper.TechnologyCapacityDto;
+import com.onclass.model.capacity.Capacity;
 import com.onclass.model.capacity.Technology;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -20,14 +21,15 @@ public class TechnologyWebClientAdapter implements ITechnologyWebClientPort {
     private final WebClient webClient;
 
     public TechnologyWebClientAdapter(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder.baseUrl("http://localhost:8085/technology").build();
+        //this.webClient = webClientBuilder.baseUrl("http://localhost:8085/technology").build();
+        this.webClient = webClientBuilder.baseUrl("http://localhost:8085").build();
     }
+
     public Mono<List<Technology>> getTechnologiesByIds(Set<Integer> ids) {
         return Flux.fromIterable(ids)
                 .flatMap(id -> webClient.get()
-                        .uri(uriBuilder -> uriBuilder.path("/byId")
-                                .queryParam("id", id)
-                                .build())
+                        .uri(uriBuilder -> uriBuilder.path("/findById/{id}")
+                                .build(id))
                         .retrieve()
                         .bodyToMono(JsonNode.class)
                         .map(jsonNode -> new Technology(
@@ -48,6 +50,19 @@ public class TechnologyWebClientAdapter implements ITechnologyWebClientPort {
     }
 
     @Override
+    public Mono<Void> createTechnologies(Capacity capacity) {
+        return webClient.post()
+                .uri("/technologies")
+                .bodyValue(capacity)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .onErrorResume(e -> {
+                    log.error("Error associating technologies with capacity: ", e);
+                    return Mono.empty();
+                });
+    }
+
+   /* @Override
     public Mono<Void> associateTechnologyWithCapacity(TechnologyCapacityDto technologyCapacityDto) {
         return webClient.post()
                 .uri("/associate")
@@ -58,20 +73,19 @@ public class TechnologyWebClientAdapter implements ITechnologyWebClientPort {
                     log.error("Error associating technologies with capacity: ", e);
                     return Mono.empty();
                 });
-    }
+    }*/
 
     @Override
     public Mono<List<Technology>> getRelationshipsById(Integer capacityId) {
         return webClient.get()
-                    .uri(uriBuilder -> uriBuilder.path("/relationships")
-                    .queryParam("capacityId", capacityId)
-                    .build())
-                    .retrieve()
-                    .bodyToFlux(Technology.class)
-                    .collectList();
+                .uri(uriBuilder -> uriBuilder.path("/relationships")
+                        .queryParam("capacityId", capacityId)
+                        .build())
+                .retrieve()
+                .bodyToFlux(Technology.class)
+                .collectList();
 
     }
-
 
 
 }
