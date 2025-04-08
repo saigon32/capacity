@@ -1,6 +1,7 @@
 package com.onclass.jpa.entity;
 
 import lombok.*;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -11,8 +12,13 @@ import org.springframework.data.relational.core.mapping.Table;
 @NoArgsConstructor
 @ToString
 public class CapacityTechnologyEntity {
+
+    @Id
+    private Integer id;
+
     @Column("id_capacity")
     private Integer idCapacity;
+
     @Column("id_technology")
     private String idTechnology;
 }

@@ -14,9 +14,10 @@ CREATE TABLE IF NOT EXISTS capacity (
 );
 
 --postgres
-CREATE TABLE IF NOT EXISTS capacity_technology (
-    id_capacity VARCHAR(50) NOT NULL,
-    id_technology VARCHAR(50) NOT NULL
+CREATE TABLE public.capacity_technology (
+    id SERIAL PRIMARY KEY,
+	id_capacity varchar(50) NOT NULL,
+	id_technology varchar(50) NOT NULL
 );
 
 --postgres

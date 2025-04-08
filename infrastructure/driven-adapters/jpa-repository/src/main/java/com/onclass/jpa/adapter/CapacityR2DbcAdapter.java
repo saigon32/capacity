@@ -34,11 +34,13 @@ public class CapacityR2DbcAdapter implements ICapacityPersistencePort {
     public Mono<Capacity> saveCapacity(Capacity capacity) {
         return capacityRepository.save(capacityEntityMapper.toEntity(capacity))
                 .map(capacityEntityMapper::toModel)
-                .map(capacityResponse -> technologyRepository.saveAll(ICapacityTechnologyEntityMapper.MAPPER.toEntityList(capacity.toBuilder()
-                        .id(capacityResponse.getId()).build())))
-                .flatMap(capacityTechnologyEntityFlux -> Mono.just(capacity))
-                .onErrorResume(DuplicateKeyException.class, ex -> Mono.error(new DBException(DBErrorMessage.CAPACITY_ALREADY_EXISTS)));
+                .doOnSuccess(capacityResponse -> technologyRepository.saveAll(ICapacityTechnologyEntityMapper.MAPPER.toEntityList(
+                                    capacity.toBuilder().id(capacityResponse.getId()).build()))
+                        .subscribe())
+                .flatMap(Mono::just)
+                .onErrorResume(DuplicateKeyException.class, ex -> Mono.error(new DBException(DBErrorMessage.CAPACITY_ALREADY_EXISTS))); // Manejamos la excepción de clave duplicada
     }
+
 
     @Override
     public Mono<Capacity> findByName(String name) {

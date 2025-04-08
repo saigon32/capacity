@@ -39,23 +39,10 @@ public class CapacityHandlerImpl implements ICapacityHandler {
         return request.bodyToMono(CapacityRequestDto.class)
                 .flatMap(dto -> {
                     Capacity capacity = capacityRequestMapper.toDomain(dto);
-
                     return capacityServicePort.createCapacity(capacity)
-                            .flatMap(savedCapacity -> {
-
-                                TechnologyCapacityDto technologyCapacityDto = new TechnologyCapacityDto();
-                                technologyCapacityDto.setCapacityId(savedCapacity.getId());
-                                technologyCapacityDto.setTechnologyIds(dto.getTechnologyIds());
-
-                                return technologyWebClientPort.getTechnologiesByIds(dto.getTechnologyIds())
-                                        .flatMap(technologies -> {
-                                            savedCapacity.setTechnologyIds(new HashSet<>(technologies));
-                                            technologyWebClientPort.createTechnologies(capacity).then();
-                                            return ServerResponse.status(HttpStatus.CREATED)
-                                                    .contentType(MediaType.APPLICATION_JSON)
-                                                    .bodyValue(capacityResponseMapper.toDto(savedCapacity));
-                                        });
-                            });
+                            .flatMap(savedCapacity -> ServerResponse.status(HttpStatus.CREATED)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .bodyValue(capacityResponseMapper.toDto(savedCapacity)));
                 });
     }
 
