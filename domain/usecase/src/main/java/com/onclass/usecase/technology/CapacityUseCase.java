@@ -32,7 +32,7 @@ public class CapacityUseCase implements ICapacityServicePort {
 
     @Override
     public Flux<Capacity> getAllCapacities(int page, int size, String sortBy, String sortOrder) {
-        return persistencePort.findAllCapacities(size, page,sortBy, sortOrder);
+        return persistencePort.findAllCapacities(size, page, sortBy, sortOrder);
 
     }
 

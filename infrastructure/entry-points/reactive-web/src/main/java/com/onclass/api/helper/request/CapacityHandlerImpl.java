@@ -6,7 +6,6 @@ import com.onclass.api.helper.mappers.ICapacityResponseMapper;
 import com.onclass.api.helper.request.dto.CapacityBootcampRequestDto;
 import com.onclass.api.helper.request.dto.CapacityRequestDto;
 import com.onclass.jpa.adapter.port.ITechnologyWebClientPort;
-import com.onclass.jpa.helper.TechnologyCapacityDto;
 import com.onclass.model.capacity.Capacity;
 import com.onclass.model.capacity.CapacityBootcamp;
 import com.onclass.model.capacity.Technology;
@@ -60,7 +59,7 @@ public class CapacityHandlerImpl implements ICapacityHandler {
         return capacityServicePort.getAllCapacities(page, size, sortBy, sortOrder)
                 .map(capacityResponseMapper::toDto)
                 .collectList()
-                .flatMap(capacityList -> {
+                /*.flatMap(capacityList -> {
                     return Flux.fromIterable(capacityList)
                             .flatMap(capacity ->
                                     technologyWebClientPort.getRelationshipsById(capacity.getId())
@@ -72,7 +71,7 @@ public class CapacityHandlerImpl implements ICapacityHandler {
                                             })
                             )
                             .collectList();
-                })
+                })*/
                 .flatMap(capacitiesWithTechnologies ->
                         ServerResponse.ok()
                                 .contentType(MediaType.APPLICATION_JSON)

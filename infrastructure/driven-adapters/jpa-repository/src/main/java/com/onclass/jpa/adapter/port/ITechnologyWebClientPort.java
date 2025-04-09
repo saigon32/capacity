@@ -16,5 +16,5 @@ public interface ITechnologyWebClientPort {
     Mono<Void> createTechnologies(Capacity capacity);
 
 
-    Mono<List<Technology>> getRelationshipsById(Integer capacityId);
+   // Mono<List<Technology>> getRelationshipsById(Integer capacityId);
 }

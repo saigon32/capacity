@@ -75,7 +75,7 @@ public class TechnologyWebClientAdapter implements ITechnologyWebClientPort {
                 });
     }*/
 
-    @Override
+   /* @Override
     public Mono<List<Technology>> getRelationshipsById(Integer capacityId) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/relationships")
@@ -85,7 +85,7 @@ public class TechnologyWebClientAdapter implements ITechnologyWebClientPort {
                 .bodyToFlux(Technology.class)
                 .collectList();
 
-    }
+    }*/
 
 
 }

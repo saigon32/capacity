@@ -31,6 +31,7 @@ public class CapacityR2DbcAdapter implements ICapacityPersistencePort {
     private final ICapacityTechnologyRepository technologyRepository;
 
     @Override
+    //mejorar el flujo  .doOnSuccess revisar!!!
     public Mono<Capacity> saveCapacity(Capacity capacity) {
         return capacityRepository.save(capacityEntityMapper.toEntity(capacity))
                 .map(capacityEntityMapper::toModel)
