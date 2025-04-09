@@ -12,7 +12,7 @@ public interface ICapacityPersistencePort {
 
     Mono<Capacity> findByName(String name);
 
-    Flux<Capacity> findAllCapacities(int page, int size, String sortBy, String sortOrder);
+    Flux<Capacity> findAllCapacities(int page, int size, /*String sortBy,*/ String sortOrder);
 
     Flux<CapacityBootcamp> createCapacitiesBootcamp(List<CapacityBootcamp> capacityBootcamps);
 }

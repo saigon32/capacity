@@ -10,7 +10,7 @@ import java.util.List;
 public interface ICapacityServicePort {
     Mono<Capacity> createCapacity(Capacity capacity);
 
-    Flux<Capacity> getAllCapacities(int page, int size,String sortBy, String sortOrder);
-
     Flux<CapacityBootcamp> createCapacitiesBootcamp(List<CapacityBootcamp> capacityBootcamps);
+
+    Flux<Capacity> getAllCapacities(int page, int size,/*String sortBy,*/ String sortOrder);
 }

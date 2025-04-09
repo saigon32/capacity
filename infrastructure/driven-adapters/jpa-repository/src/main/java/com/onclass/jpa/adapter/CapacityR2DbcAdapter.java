@@ -31,15 +31,14 @@ public class CapacityR2DbcAdapter implements ICapacityPersistencePort {
     private final ICapacityTechnologyRepository technologyRepository;
 
     @Override
-    //mejorar el flujo  .doOnSuccess revisar!!!
     public Mono<Capacity> saveCapacity(Capacity capacity) {
         return capacityRepository.save(capacityEntityMapper.toEntity(capacity))
                 .map(capacityEntityMapper::toModel)
                 .doOnSuccess(capacityResponse -> technologyRepository.saveAll(ICapacityTechnologyEntityMapper.MAPPER.toEntityList(
-                                    capacity.toBuilder().id(capacityResponse.getId()).build()))
+                                capacity.toBuilder().id(capacityResponse.getId()).build()))
                         .subscribe())
                 .flatMap(Mono::just)
-                .onErrorResume(DuplicateKeyException.class, ex -> Mono.error(new DBException(DBErrorMessage.CAPACITY_ALREADY_EXISTS))); // Manejamos la excepción de clave duplicada
+                .onErrorResume(DuplicateKeyException.class, ex -> Mono.error(new DBException(DBErrorMessage.CAPACITY_ALREADY_EXISTS)));
     }
 
 
@@ -51,21 +50,26 @@ public class CapacityR2DbcAdapter implements ICapacityPersistencePort {
     }
 
     @Override
-    public Flux<Capacity> findAllCapacities(int page, int size, String sortBy, String sortOrder) {
-        Sort sort = sortOrder.equalsIgnoreCase("desc") ? Sort.by("name").descending() : Sort.by("name").ascending();
-        PageRequest pageRequest = PageRequest.of(page, size, sort);
-
-        return capacityRepository.findAllBy(pageRequest)
-                .flatMap(capacityEntity -> Mono.just(capacityEntityMapper.toModel(capacityEntity)))
-                .onErrorMap(e -> new DBException(DBErrorMessage.UNEXPECTED_EXCEPTION));
-    }
-
-    @Override
     public Flux<CapacityBootcamp> createCapacitiesBootcamp(List<CapacityBootcamp> capacityBootcamps) {
         List<CapacityBootcampEntity> entities = capacityBootcampEntityMapper.toEntityList(capacityBootcamps);
         return Flux.fromIterable(entities)
                 .flatMap(capacityBootcampRepository::save)
                 .map(capacityBootcampEntityMapper::toModel);
+    }
+
+    @Override
+    public Flux<Capacity> findAllCapacities(int page, int size, /*String sortBy,*/ String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase("desc") ? Sort.by("name").descending() : Sort.by("name").ascending();
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+        return capacityRepository.findAllBy(pageRequest)
+                .collectList()
+                .doOnNext(l -> {
+                    System.out.println("lista : "+l);
+                })
+                .flatMapMany(Flux::fromIterable)
+                // .flatMap(capacityEntity -> Mono.just(capacityEntityMapper.toModel(capacityEntity)))
+                .map(capacityEntityMapper::toModel);
+        //.onErrorMap(e -> new DBException(DBErrorMessage.UNEXPECTED_EXCEPTION));
     }
 
 }

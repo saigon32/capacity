@@ -8,7 +8,6 @@ import com.onclass.api.helper.request.dto.CapacityRequestDto;
 import com.onclass.jpa.adapter.port.ITechnologyWebClientPort;
 import com.onclass.model.capacity.Capacity;
 import com.onclass.model.capacity.CapacityBootcamp;
-import com.onclass.model.capacity.Technology;
 import com.onclass.model.capacity.gateways.ICapacityServicePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,12 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -53,12 +49,15 @@ public class CapacityHandlerImpl implements ICapacityHandler {
     public Mono<ServerResponse> getCapacities(ServerRequest request) {
         int page = Integer.parseInt(request.queryParam("page").orElse("0"));
         int size = Integer.parseInt(request.queryParam("size").orElse("10"));
-        String sortBy = request.queryParam("sortBy").orElse("name");
+        //String sortBy = request.queryParam("sortBy").orElse("name");
         String sortOrder = request.queryParam("sortOrder").orElse("asc");
 
-        return capacityServicePort.getAllCapacities(page, size, sortBy, sortOrder)
+        return capacityServicePort.getAllCapacities(page, size, sortOrder)
                 .map(capacityResponseMapper::toDto)
                 .collectList()
+                .flatMap(capacities -> ServerResponse.ok().bodyValue(capacities));
+
+
                 /*.flatMap(capacityList -> {
                     return Flux.fromIterable(capacityList)
                             .flatMap(capacity ->
@@ -72,11 +71,12 @@ public class CapacityHandlerImpl implements ICapacityHandler {
                             )
                             .collectList();
                 })*/
-                .flatMap(capacitiesWithTechnologies ->
+                /*.flatMap(capacitiesWithTechnologies ->
                         ServerResponse.ok()
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .bodyValue(capacitiesWithTechnologies)
-                );
+                );*/
+
     }
 
     @Override

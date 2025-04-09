@@ -31,8 +31,9 @@ public class CapacityUseCase implements ICapacityServicePort {
     }
 
     @Override
-    public Flux<Capacity> getAllCapacities(int page, int size, String sortBy, String sortOrder) {
-        return persistencePort.findAllCapacities(size, page, sortBy, sortOrder);
+    public Flux<Capacity> getAllCapacities(int page, int size, /*String sortBy,*/ String sortOrder) {
+        return capacityCreateValidations.validatePageParameters(size, page, /*sortBy,*/ sortOrder)
+                .thenMany(persistencePort.findAllCapacities(page, size, sortOrder));
 
     }
 
